@@ -1,0 +1,106 @@
+.overlay-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.overlay-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 6px;
+    z-index: 1001;
+    width: 400px;
+}
+
+.btn-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border: none;
+    background: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.file-drop-zone {
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.file-drop-zone:hover {
+    border-color: #0d6efd;
+    background-color: #e7f1ff;
+}
+
+.file-drop-zone.drag-over {
+    border-color: #0d6efd;
+    background-color: #e7f1ff;
+    border-style: solid;
+}
+
+.file-drop-zone.has-file {
+    border-color: #198754;
+    background-color: #f0f9f4;
+}
+
+.drop-zone-content {
+    color: #6c757d;
+    width: 100%;
+}
+
+.drop-zone-content svg {
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.uploaded-file-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    max-width: 100%;
+}
+
+.uploaded-file-info svg {
+    color: #198754;
+    flex-shrink: 0;
+}
+
+.file-details {
+    flex: 1;
+    text-align: left;
+    min-width: 0;
+    /* Important for text-overflow to work */
+}
+
+.file-name {
+    font-weight: 500;
+    color: #212529;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.file-size {
+    font-size: 0.875rem;
+}
+
+.uploaded-file-info .btn {
+    flex-shrink: 0;
+}

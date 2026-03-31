@@ -1,0 +1,190 @@
+<div class="overlay-backdrop" (click)="close()"></div>
+<div class="overlay-content" (click)="$event.stopPropagation()">
+  <button class="btn-close" (click)="close()">×</button>
+  <form
+    #createExperimentForm="ngForm"
+    (ngSubmit)="onSubmit(createExperimentForm)"
+    class="container mt-4"
+    novalidate
+  >
+    <!-- Name Field -->
+    <div class="mb-3">
+      <label for="name" class="form-label">Experiment Name *</label>
+      <input
+        type="text"
+        id="name"
+        name="name"
+        class="form-control"
+        [(ngModel)]="formData.name"
+        required
+        minlength="5"
+        pattern="^[a-zA-Z0-9,'-\\s]+$"
+        #name="ngModel"
+        [ngClass]="{ 'is-invalid': name.invalid && name.touched }"
+      />
+      <div *ngIf="name.invalid && name.touched" class="invalid-feedback">
+        <div *ngIf="name.errors?.['required']">Name is required.</div>
+        <div *ngIf="name.errors?.['minlength']">
+          Minimum 5 characters required.
+        </div>
+        <div *ngIf="name.errors?.['pattern']">
+          Only alphanumeric, comma, apostrophe, hyphen, and space allowed.
+        </div>
+      </div>
+    </div>
+
+    <!-- Tags Field -->
+    <div class="mb-3">
+      <label for="tags" class="form-label"
+        >Tags <span class="tag-text">(Comma-separate the values)</span></label
+      >
+
+      <input
+        type="text"
+        id="tags"
+        name="tags"
+        class="form-control"
+        [(ngModel)]="formData.tags"
+        pattern="^[a-zA-Z0-9,'-\\s]*$"
+        #tags="ngModel"
+        [ngClass]="{ 'is-invalid': tags.invalid && tags.touched }"
+      />
+      <div *ngIf="tags.invalid && tags.touched" class="invalid-feedback">
+        <div *ngIf="tags.errors?.['pattern']">
+          Only alphanumeric, comma, apostrophe, hyphen, and space allowed.
+        </div>
+      </div>
+    </div>
+
+    <!-- https://stackoverflow.com/questions/50508712/validate-an-url -->
+    <div class="mb-3">
+      <label for="redirect_url" class="form-label">Redirect URL *</label>
+      <input
+        type="redirect_url"
+        id="redirect_url"
+        name="redirect_url"
+        class="form-control"
+        [(ngModel)]="formData.redirect_url"
+        required
+        pattern="^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+$"
+        #redirect_url="ngModel"
+        [ngClass]="{
+          'is-invalid': redirect_url.invalid && redirect_url.touched,
+        }"
+      />
+      <div
+        *ngIf="redirect_url.invalid && redirect_url.touched"
+        class="invalid-feedback"
+      >
+        <div *ngIf="redirect_url.errors?.['required']">
+          Redirect URL is required.
+        </div>
+        <div *ngIf="redirect_url.errors?.['pattern']">Invalid Redirect URL</div>
+      </div>
+    </div>
+
+    <!-- File Upload Field -->
+    <div class="mb-3">
+      <label class="form-label">Upload ZIP File *</label>
+      <label class="form-label" style="font-size: 12px"
+        >Only ZIP file from PCIbex Farm is accepted</label
+      >
+      <div
+        class="file-drop-zone"
+        [class.drag-over]="isDragging"
+        [class.has-file]="uploadedFile"
+        [class.is-invalid-zone]="isFileInputTouched && !uploadedFile"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+        (click)="fileInput.click(); isFileInputTouched = true"
+      >
+        <input
+          #fileInput
+          type="file"
+          accept=".zip"
+          (change)="onFileSelected($event)"
+          style="display: none"
+        />
+
+        <div *ngIf="!uploadedFile" class="drop-zone-content">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="48"
+            height="48"
+            fill="currentColor"
+            class="bi bi-file-earmark-zip"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M5 7.5a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v.938l.4 1.599a1 1 0 0 1-.416 1.074l-.93.62a1 1 0 0 1-1.109 0l-.93-.62a1 1 0 0 1-.415-1.074L5 8.438V7.5z"
+            />
+            <path
+              d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5L14 4.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1h-2v1h-1v1h1v1h-1v1h1v1H6V5H5V4h1V3H5V2h1V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5h-2z"
+            />
+          </svg>
+          <p class="mt-2 mb-1">Drag and drop a ZIP file here</p>
+          <p class="text-muted small">or click to browse</p>
+        </div>
+
+        <div *ngIf="uploadedFile" class="uploaded-file-info">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="32"
+            height="32"
+            fill="currentColor"
+            class="bi bi-file-earmark-zip-fill"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M5.5 9.438V8.5h1v.938a1 1 0 0 0 .03.243l.4 1.598-.93.62-.93-.62.4-1.598a1 1 0 0 0 .03-.243z"
+            />
+            <path
+              d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0zM9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1zM5 7.5a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v.938l.4 1.599a1 1 0 0 1-.416 1.074l-.93.62a1 1 0 0 1-1.109 0l-.93-.62a1 1 0 0 1-.415-1.074L5 8.438V7.5z"
+            />
+          </svg>
+          <div class="file-details">
+            <p class="file-name mb-1">{{ uploadedFile.name }}</p>
+            <p class="file-size text-muted small mb-0">
+              {{ formatFileSize(uploadedFile.size) }}
+            </p>
+          </div>
+          <button
+            type="button"
+            class="btn btn-sm btn-outline-danger"
+            (click)="removeFile($event)"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+      <div
+        *ngIf="isFileInputTouched && !uploadedFile"
+        class="text-danger small mt-1"
+      >
+        ZIP file is required.
+      </div>
+      <div *ngIf="fileError" class="text-danger small mt-1">
+        {{ fileError }}
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="createExperimentForm.invalid || !uploadedFile"
+    >
+      Create
+    </button>
+    <button
+      type="button"
+      class="btn btn-primary"
+      (click)="clearForm()"
+      [disabled]="createExperimentForm.pristine && !uploadedFile"
+      style="margin-left: 15px"
+    >
+      Clear
+    </button>
+  </form>
+</div>

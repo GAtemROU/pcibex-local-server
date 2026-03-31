@@ -1,0 +1,30 @@
+<div class="container mt-4">
+  <div class="row">
+    <div class="mb-3 text-end">
+      <button
+        class="btn btn-outline-primary top-0 end-0 m-3"
+        (click)="toggleOverlay()"
+      >
+        Create User
+      </button>
+    </div>
+    <!-- Conditionally render the popup -->
+    <app-create-user
+      *ngIf="showOverlay"
+      (closed)="closeOverlay()"
+    ></app-create-user>
+  </div>
+  <div class="row">
+    <div class="col-md-3 mb-3" *ngFor="let user of users">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="card-title">{{ user.full_name }}</h5>
+          <p class="card-text text-muted mb-2"><b>Role:</b> {{ user.role }}</p>
+          <p class="card-text text-muted mb-2">
+            <b>Active From:</b> {{ user.active_from || "NA" }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

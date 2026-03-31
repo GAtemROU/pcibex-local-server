@@ -1,0 +1,43 @@
+<style>
+  :host {
+    display: block;
+    width: 100%;
+  }
+
+  main {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+  }
+</style>
+
+<!-- @if (isAuthenticated()) {
+<main class="d-flex flex-column min-vh-100 w-100">
+  <app-header></app-header>
+  <div class="flex-fill">
+    <router-outlet></router-outlet>
+  </div>
+  <app-footer></app-footer>
+</main>
+} @else {
+<main class="d-flex flex-column min-vh-100 w-100">
+  <app-login (loginSuccess)="onLoginSuccess()"></app-login>
+  <div class="flex-fill">
+    <router-outlet></router-outlet>
+  </div>
+</main>
+} -->
+
+<main class="d-flex flex-column min-vh-100 w-100">
+  <!-- <app-header *ngIf="isAuthenticated()"></app-header> -->
+
+  <div class="flex-fill">
+    <app-header
+      *ngIf="isAuthenticated() && router.url !== '/login'"
+    ></app-header>
+    <app-toast></app-toast>
+    <router-outlet></router-outlet>
+  </div>
+  <app-footer *ngIf="isAuthenticated()"></app-footer>
+</main>

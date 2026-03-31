@@ -1,0 +1,109 @@
+<div class="overlay-backdrop" (click)="close()"></div>
+<div class="overlay-content" (click)="$event.stopPropagation()">
+  <button class="btn-close" (click)="close()">×</button>
+  <div class="container mt-4">
+    <div class="row text-center">
+      <h4><b>Create User</b></h4>
+    </div>
+    <div class="row">
+      <form
+        #createUserForm="ngForm"
+        (ngSubmit)="onSubmit(createUserForm)"
+        class="container mt-4"
+        novalidate
+      >
+        <div class="mb-3">
+          <label for="name" class="form-label">User Full Name *</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            class="form-control"
+            [(ngModel)]="formData.full_name"
+            required
+            minlength="5"
+            pattern="^[a-zA-ZÀ-ÿ'’\- ]+$"
+            #name="ngModel"
+            [ngClass]="{ 'is-invalid': name.invalid && name.touched }"
+          />
+          <div *ngIf="name.invalid && name.touched" class="invalid-feedback">
+            <div *ngIf="name.errors?.['required']">Full Name is required.</div>
+            <div *ngIf="name.errors?.['minlength']">
+              Minimum 5 characters required.
+            </div>
+            <div *ngIf="name.errors?.['pattern']">
+              Please enter a valid full name. Use only letters (including
+              accents), apostrophes, hyphens, and spaces.
+            </div>
+          </div>
+        </div>
+
+        <!-- Tags Field -->
+        <div class="mb-3">
+          <label for="username" class="form-label"
+            >Email Address
+            <span class="tag-text">(This will be the username)</span></label
+          >
+
+          <input
+            type="text"
+            id="username"
+            name="username"
+            class="form-control"
+            [(ngModel)]="formData.username"
+            pattern="^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$"
+            #username="ngModel"
+            [ngClass]="{ 'is-invalid': username.invalid && username.touched }"
+          />
+          <div
+            *ngIf="username.invalid && username.touched"
+            class="invalid-feedback"
+          >
+            <div *ngIf="username.errors?.['pattern']">
+              Invalid Email Address
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="role" class="form-label">User Role</label>
+          <select
+            id="role"
+            name="role"
+            class="form-select"
+            [(ngModel)]="formData.role"
+            required
+            #role="ngModel"
+            [ngClass]="{ 'is-invalid': role.invalid && role.touched }"
+          >
+            <option value="" disabled selected>Select a role</option>
+            <option value="ADMIN">Admin</option>
+            <option value="USER">User</option>
+            <option value="STUDENT">Student</option>
+          </select>
+          <div *ngIf="role.invalid && role.touched" class="invalid-feedback">
+            Please select a role.
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="createUserForm.invalid"
+        >
+          Create
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="clearForm()"
+          [disabled]="createUserForm.pristine"
+          style="margin-left: 15px"
+        >
+          Clear
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

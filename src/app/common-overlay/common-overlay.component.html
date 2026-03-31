@@ -1,0 +1,42 @@
+<div class="overlay-backdrop" (click)="close()"></div>
+<div class="overlay-content" (click)="$event.stopPropagation()">
+  <button class="btn-close" (click)="close()">×</button>
+  <div class="container mt-4">
+    <div class="my-3">
+      <div class="question-center">
+        <span>
+          Are you sure you want to {{ actionType }} the experiment
+          <b>{{ selectedItem.experiment }}</b
+          >?
+        </span>
+        <span>
+          @switch (actionType) {
+            @case ("erase") {
+              All the data collected for
+              <b>{{ selectedItem.experiment }}</b> will be permanently erased.
+              Use this only if the experiment is not published in Prolific.
+            }
+            @default {
+              All the data collected for
+              <b>{{ selectedItem.experiment }}</b> will be permanently deleted.
+            }
+          }
+        </span>
+      </div>
+      <div class="action-buttons d-flex justify-content-center my-3">
+        <div class="btn-group gap-3" role="group" aria-label="Basic example">
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="executeAction()"
+          >
+            Yes
+          </button>
+          <button type="button" class="btn btn-primary" (click)="close()">
+            No
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+{
+    "/www": {
+        "target": "http://localhost:3001",
+        "secure": false,
+        "changeOrigin": true
+    },
+    "/data_includes": {
+        "target": "http://localhost:3001",
+        "secure": false,
+        "changeOrigin": true
+    },
+    "/css_includes": {
+        "target": "http://localhost:3001",
+        "secure": false,
+        "changeOrigin": true
+    },
+    "/other_includes": {
+        "target": "http://localhost:3001",
+        "secure": false,
+        "changeOrigin": true
+    },
+    "/js_includes": {
+        "target": "http://localhost:3001",
+        "secure": false,
+        "changeOrigin": true
+    },
+    "/send": {
+        "target": "http://localhost:3001",
+        "secure": false,
+        "changeOrigin": true
+    }
+}

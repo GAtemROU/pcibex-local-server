@@ -13,14 +13,14 @@ This project consists of two components in a single repository:
 
 Before getting started, ensure you have the following installed:
 
-| Tool              | Version      |
-| ----------------- | ------------ |
-| Node.js           | v22.14.0     |
-| Angular CLI       | v19.2.7      |
-| Python            | _(see link)_ |
-| MongoDB Community | 8.0.9        |
+| Tool              | Version  |
+| ----------------- | -------- |
+| Node.js           | v22.14.0 |
+| Angular CLI       | v19.2.7  |
+| Python            | 3.11.9   |
+| MongoDB Community | 8.0.9    |
 
-> 📎 Follow the installation guides here: _(add your links here)_
+> 📎 Follow the installation guides here: Node.js[https://nodejs.org/en/download], Angular[https://angular.dev/installation], MongoDB[https://www.mongodb.com/docs/manual/installation/]
 
 ---
 
@@ -28,6 +28,7 @@ Before getting started, ensure you have the following installed:
 
 ```
 project-root/
+├── deployment/        # Subdirectory containing scripts for Server deployments
 ├── ibex/              # Subdirectory containing PCIbex files
 ├── server/            # Quartz application for backend
 ├── src/               # Angular 19 application for frontend
@@ -43,8 +44,8 @@ project-root/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/NiranjanHegde26/PCIbex-Based-Server.git
-cd PCIbex-Based-Server
+git clone https://github.com/NiranjanHegde26/pcibex-local-server.git
+cd pcibex-local-server
 ```
 
 ### 2. Configure Environment Variables
@@ -84,7 +85,9 @@ Later, go to `server/` and run:
 pip install -r requirements.txt
 ```
 
-### 5. Start the Backend
+### 5. Create a subdirectory called "source" inside ibex.
+
+### 6. Start the Backend
 
 From the `server/` subdirectory, run:
 
@@ -94,11 +97,11 @@ hypercorn server:app --bind 127.0.0.1:3001 --reload
 
 The backend will be available at `http://127.0.0.1:3001`.
 
-### 6. Configure the Frontend Variables
+### 7. Configure the Frontend Variables
 
 Go to `src/environments/environment.development.ts` and edit the confiugration (only if your frontend and backend run in a different port, or to add a new role to the application)
 
-### 7. Start the Frontend
+### 8. Start the Frontend
 
 From the project root, run:
 
@@ -110,7 +113,7 @@ npm start
 
 The frontend will be available at `http://localhost:4200`.
 
-### 8. You're all set!
+### 9. You're all set!
 
 Once both the backend and frontend are running, open your browser and navigate to the Angular app URL. You should be able to create, manage, and obtain URLs of PCIbex experiments entirely in your local MongoDB instance.
 
@@ -118,7 +121,7 @@ Once both the backend and frontend are running, open your browser and navigate t
 
 ## Deployment
 
-Except for Steps 5 and 7, the rest from [Running Locally](#Running-Locally) apply on your server as well. Complete those first, then follow the additional steps below.
+Except for Steps 6 and 8, the rest from [Running Locally](#Running-Locally) apply on your server as well. Complete those first, then follow the additional steps below.
 
 > ⚠️ The following section assumes that the codebase is hosted on a Linux-based server. For Windows-based servers, we recommend referring to different documentations.
 
@@ -155,7 +158,7 @@ sudo systemctl restart pcibex
 
 ### 3. Deploy frontend
 
-Go to project root, and run:
+Go to `deployment`, and run:
 
 ```bash
 .\ui-deploy.sh

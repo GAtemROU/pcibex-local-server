@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <!-- JQuery -->
+    <script src="../jquery.min.js"></script>
+    <script src="../jquery-ui.min.js"></script>
+
+    <!-- Debugging -->
+    <script src="../jsDump.js"></script>
+
+    <!-- Plugin detection -->
+    <script src="../PluginDetect.js"></script>
+
+    <!-- Utilities -->
+    <script src="../util.js"></script>
+    <script src="../shuffle.js"></script>
+    <script src="../json.js"></script>
+
+    <!-- Counter -->
+    <script src="http://127.0.0.1:3001/counter?exp={{ experiment_name | urlencode }}"></script>
+
+    <script type="application/x-javascript">
+      var __server_py_script_name__ = 'server.py';
+    </script>
+
+    <!-- PennController -->
+    <script src="../../js_includes/AcceptabilityJudgment.js"></script>
+    <script src="../../js_includes/DashedAcceptabilityJudgment.js"></script>
+    <script src="../../js_includes/DashedSentence.js"></script>
+    <script src="../../js_includes/FlashSentence.js"></script>
+    <script src="../../js_includes/Form.js"></script>
+    <script src="../../js_includes/Message.js"></script>
+    <script src="../../js_includes/PennController.js"></script>
+    <script src="../../js_includes/Question.js"></script>
+    <script src="../../js_includes/Scale.js"></script>
+    <script src="../../js_includes/Separator.js"></script>
+    <script src="../../js_includes/VBox.js"></script>
+
+    <!-- Sound -->
+    <script src="../soundmanager2-jsmin.js"></script>
+
+    <!-- Backward compatibility -->
+    <script src="../backcompatcruft.js"></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../../css_includes/DashedSentence.css" />
+    <link rel="stylesheet" href="../../css_includes/FlashSentence.css" />
+    <link rel="stylesheet" href="../../css_includes/Form.css" />
+    <link
+      rel="stylesheet"
+      href="../../css_includes/{{ experiment_name }}/global_main.css"
+    />
+    <link
+      rel="stylesheet"
+      href="../../css_includes/{{ experiment_name }}/global_z.css"
+    />
+    <link rel="stylesheet" href="../../css_includes/Message.css" />
+    <link rel="stylesheet" href="../../css_includes/Question.css" />
+    <link rel="stylesheet" href="../../css_includes/Scale.css" />
+    <link rel="stylesheet" href="../../css_includes/Separator.css" />
+
+    <!-- Config -->
+    <script src="../conf.js"></script>
+
+    <!-- Experiment -->
+    <script src="../../data_includes/{{ experiment_name }}/main.js"></script>
+    <script src="../../other_includes/main.js"></script>
+
+    <title>Saarland Experiment</title>
+    <script type="application/x-javascript">
+      document.title = conf_pageTitle;
+    </script>
+  </head>
+
+  <body id="bod">
+    <noscript>
+      <p>You need to have Javascript enabled in order to use this page.</p>
+    </noscript>
+  </body>
+</html>

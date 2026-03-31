@@ -1,0 +1,17 @@
+# /etc/systemd/system/pcibex.service
+[Unit]
+Description=Quart Hypercorn Web Service (PCIbex)
+After=network.target
+
+[Service]
+User=pcibex
+Group=pcibex
+UMask=0002
+WorkingDirectory=/shared/mosaic/vd-pcibex/server
+Environment="PATH=/shared/mosaic/vd-pcibex/server/venv/bin"
+ExecStart=/shared/mosaic/vd-pcibex/server/venv/bin/hypercorn server:app --bind 127.0.0.1:3001
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

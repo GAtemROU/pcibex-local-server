@@ -88,14 +88,28 @@ def check_password(hashed_password, password):
     return current_app.extensions['bcrypt'].check_password_hash(hashed_password, password)
 
 def getExperimentFromHeaders(url):
+  if url is None:
+    return None
   parsed_url = urlparse(url)
-  path_parts = parsed_url.path.strip("/").split("/")  # Split path into parts
-  experiment_name = path_parts[1] 
-  return(experiment_name)  
+  path_parts = [p for p in parsed_url.path.strip("/").split("/") if p]
+  if len(path_parts) < 2:
+    return None
+  return path_parts[1]
+
+def getExperimentNameFromPath(path):
+  # Request paths use the same www/<experiment>/... layout as media files.
+  if path is None:
+    return None
+  path_parts = [p for p in path.strip("/").split("/") if p]
+  if len(path_parts) < 2:
+    return None
+  return path_parts[1]
 
 def extractMediaFilePath(filename):
   parsed_filename = urlparse(filename)
-  path_parts = parsed_filename.path.strip("/").split("/")
+  path_parts = [p for p in parsed_filename.path.strip("/").split("/") if p]
+  if len(path_parts) < 3:
+    return None
   return (path_parts[1], path_parts[2]) # Experiment name at 1 and file name with extension at 2
 
 def is_valid_password(password) -> bool:

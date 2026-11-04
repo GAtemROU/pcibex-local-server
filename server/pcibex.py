@@ -6,7 +6,7 @@ import server_conf  # Import your configuration file
 from datetime import datetime
 import os
 import json
-from utils import getExperimentFromHeaders, extractMediaFilePath
+from utils import getExperimentFromHeaders, extractMediaFilePath, getExperimentNameFromPath
 from experiments import get_experiment_entry_by_name
 
 PORT = server_conf.PORT
@@ -30,7 +30,9 @@ async def send_files(path):
     """
     if 'setsquare' in request.args:
         setsquare = request.args.get("setsquare", None)
-        experiment_name = getExperimentFromHeaders(request.headers.get('Referer')) # Extract the name of the experiment based on request arguments.
+        experiment_name = getExperimentNameFromPath(path)
+        if experiment_name is None:
+            return jsonify(USER_MESSAGES["EXPERIMENT_NOT_FOUND"]), 400
         counter_file = os.path.join(PRIVATE_DIRECTORY,experiment_name, "counter")
         
         if setsquare is not None:
@@ -44,10 +46,15 @@ async def send_files(path):
           return jsonify("error"), 400
     
     if 'allchunks' in request.args:
-        experiment_name = getExperimentFromHeaders(request.headers.get('Referer'))
+        experiment_name = getExperimentNameFromPath(path)
+        if experiment_name is None:
+            return jsonify(USER_MESSAGES["EXPERIMENT_NOT_FOUND"]), 400
         jsondict = {}
+        chunk_folder = os.path.join(CHUNK_DIR, experiment_name)
+        if not os.path.isdir(chunk_folder):
+            # Experiments without chunk_includes content have nothing to return.
+            return jsonify(jsondict)
         try:
-           chunk_folder = os.path.join(CHUNK_DIR, experiment_name)
            for fname in os.listdir(chunk_folder):
                 file_path = os.path.join(chunk_folder, fname)
 
@@ -71,6 +78,8 @@ async def send_files(path):
     if path.endswith((".wav", ".mp3", ".m4a", ".jpeg", ".jpg", ".png")):
       # Media file, so extract the path
       media_file_path = extractMediaFilePath(path)
+      if media_file_path is None:
+        abort(404)
       return await send_from_directory(os.path.join(CHUNK_DIR, media_file_path[0]), media_file_path[1])
     return await send_from_directory(PUBLIC_DIRECTORY, path)
   
@@ -82,6 +91,8 @@ async def server():
     """
     data = (await request.data).decode("utf-8")
     experiment_name = getExperimentFromHeaders(request.headers.get('Referer'))
+    if experiment_name is None:
+        return jsonify(USER_MESSAGES["EXPERIMENT_NOT_FOUND"]), 400
     experiment_entry = await get_experiment_entry_by_name(experiment_name)
     if not experiment_entry:
         return jsonify(USER_MESSAGES["EXPERIMENT_NOT_FOUND"]), 404

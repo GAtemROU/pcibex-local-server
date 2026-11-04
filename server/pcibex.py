@@ -19,6 +19,11 @@ CHUNK_DIR = os.path.join(PUBLIC_DIRECTORY, server_conf.CHUNK_INCLUDES_DIR)
 
 pcibex_routes = Blueprint('pcibex', __name__)
 
+@pcibex_routes.route('/www/<experiment_name>/server.py', methods=['POST'])
+async def send_results_from_legacy_server(experiment_name):
+    return await server()
+
+
 @pcibex_routes.route('/<path:path>', methods=['GET'])
 async def send_files(path): 
     """ 
@@ -28,6 +33,7 @@ async def send_files(path):
         However, the same route is also necessary to serve media files necessary for the experiment, 
         and such requests do not contain any query params. So a separate if-else block takes care of such requests.
     """
+
     if 'setsquare' in request.args:
         setsquare = request.args.get("setsquare", None)
         experiment_name = getExperimentNameFromPath(path)

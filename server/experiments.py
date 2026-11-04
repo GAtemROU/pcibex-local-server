@@ -257,7 +257,13 @@ def write_experiment_html(experiment_name):
     template = jinja_env.get_template("template.html")
 
     html = template.render(
-        experiment_name=experiment_name
+        experiment_name=experiment_name,
+        has_global_z_css=(
+            Path(PUBLIC_DIRECTORY)
+            / "css_includes"
+            / experiment_name
+            / "global_z.css"
+        ).is_file(),
     )
 
     output_dir = Path(PUBLIC_DIRECTORY) / "www" / experiment_name

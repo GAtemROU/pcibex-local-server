@@ -176,10 +176,12 @@ class ExperimentImportTests(unittest.IsolatedAsyncioTestCase):
 
                 html_path = self.public_directory / "www" / experiment_name / "index.html"
                 self.assertTrue(html_path.is_file())
+                generated_html = html_path.read_text(encoding="utf-8")
                 self.assertIn(
                     f"data_includes/{experiment_name}/main.js",
-                    html_path.read_text(encoding="utf-8"),
+                    generated_html,
                 )
+                self.assertNotIn("global_z.css", generated_html)
 
                 html_response = await self.client.get(
                     f"/www/{experiment_name}/index.html"
@@ -254,6 +256,24 @@ class ExperimentImportTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(results_path.read_text(encoding="utf-8").strip(), result_payload)
                 counter_path = self.private_directory / experiment_name / "counter"
                 self.assertEqual(counter_path.read_text(encoding="utf-8"), "1")
+
+    async def test_generated_html_includes_global_z_css_only_when_present(self):
+        experiment_name = "with-global-z"
+        css_directory = (
+            self.public_directory / "css_includes" / experiment_name
+        )
+        css_directory.mkdir(parents=True)
+
+        experiments.write_experiment_html(experiment_name)
+        html_path = self.public_directory / "www" / experiment_name / "index.html"
+        self.assertNotIn("global_z.css", html_path.read_text(encoding="utf-8"))
+
+        (css_directory / "global_z.css").write_text(
+            "body { color: rebeccapurple; }",
+            encoding="utf-8",
+        )
+        experiments.write_experiment_html(experiment_name)
+        self.assertIn("global_z.css", html_path.read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

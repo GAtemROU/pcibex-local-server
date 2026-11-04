@@ -19,7 +19,7 @@
     <script src="../json.js"></script>
 
     <!-- Counter -->
-    <script src="http://127.0.0.1:3001/counter?exp={{ experiment_name | urlencode }}"></script>
+    <script src="../../counter?exp={{ experiment_name | urlencode }}"></script>
 
     <script type="application/x-javascript">
       var __server_py_script_name__ = 'server.py';
@@ -52,10 +52,12 @@
       rel="stylesheet"
       href="../../css_includes/{{ experiment_name }}/global_main.css"
     />
-    <link
-      rel="stylesheet"
-      href="../../css_includes/{{ experiment_name }}/global_z.css"
-    />
+    {% if has_global_z_css %}
+      <link
+        rel="stylesheet"
+        href="../../css_includes/{{ experiment_name }}/global_z.css"
+      />
+    {% endif %}
     <link rel="stylesheet" href="../../css_includes/Message.css" />
     <link rel="stylesheet" href="../../css_includes/Question.css" />
     <link rel="stylesheet" href="../../css_includes/Scale.css" />

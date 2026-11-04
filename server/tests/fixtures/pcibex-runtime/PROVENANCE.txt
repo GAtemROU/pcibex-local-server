@@ -1,0 +1,11 @@
+This directory contains the shared browser runtime files used by the PCIbex
+example execution smoke tests.
+
+Source: the standalone IBEX bundle supplied for this project, whose upstream
+project is https://github.com/addrummond/ibex. The supplied bundle did not
+include its upstream Git revision metadata, so the checked-in files themselves
+are the exact runtime snapshot used by CI.
+
+The runtime files are distributed under the BSD license reproduced in LICENSE.
+The PennController scripts are provided by the example ZIP fixtures, not copied
+into this directory.

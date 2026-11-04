@@ -13,6 +13,7 @@ from unittest.mock import AsyncMock, patch
 import jwt
 from jinja2 import Environment, FileSystemLoader
 from quart import Quart
+from werkzeug.datastructures import FileStorage
 
 SERVER_DIR = Path(__file__).resolve().parents[1]
 REPOSITORY_DIR = SERVER_DIR.parent
@@ -143,11 +144,17 @@ class ExperimentImportTests(unittest.IsolatedAsyncioTestCase):
                 with archive_path.open("rb") as source_zip:
                     response = await self.client.post(
                         "/api/experiments/",
-                        data={
+                        form={
                             "name": experiment_name,
                             "tags": "",
                             "redirect_url": "https://example.test/complete",
-                            "file": (io.BytesIO(source_zip.read()), archive_name),
+                        },
+                        files={
+                            "file": FileStorage(
+                                stream=io.BytesIO(source_zip.read()),
+                                filename=archive_name,
+                                content_type="application/zip",
+                            )
                         },
                         headers=self.auth_headers,
                     )

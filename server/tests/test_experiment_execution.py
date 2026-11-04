@@ -203,7 +203,6 @@ class ExperimentExecutionSmokeTests(unittest.IsolatedAsyncioTestCase):
                 host="127.0.0.1",
                 port=self.port,
                 debug=False,
-                use_reloader=False,
             )
         )
         await self._wait_for_server()

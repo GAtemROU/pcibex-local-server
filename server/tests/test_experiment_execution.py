@@ -14,6 +14,7 @@ from unittest.mock import AsyncMock, patch
 
 import jwt
 from jinja2 import Environment, FileSystemLoader
+from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 from playwright.async_api import async_playwright
 from quart import Quart
 from werkzeug.datastructures import FileStorage
@@ -48,7 +49,7 @@ class ExperimentExecutionSmokeTests(unittest.IsolatedAsyncioTestCase):
         self.source_directory = self.public_directory / "source"
         self.source_directory.mkdir(parents=True)
 
-        for directory in ("www", "css_includes", "other_includes"):
+        for directory in ("www", "other_includes"):
             shutil.copytree(RUNTIME_DIR / directory, self.public_directory / directory)
 
         user_collection = SimpleNamespace(
@@ -211,12 +212,36 @@ class ExperimentExecutionSmokeTests(unittest.IsolatedAsyncioTestCase):
             browser = await playwright.chromium.launch()
             try:
                 empty_page = await browser.new_page()
+                browser_diagnostics = []
+                empty_page.on(
+                    "requestfailed",
+                    lambda request: browser_diagnostics.append(
+                        f"request failed: {request.url} ({request.failure})"
+                    ),
+                )
+                empty_page.on(
+                    "response",
+                    lambda response: browser_diagnostics.append(
+                        f"HTTP {response.status}: {response.url}"
+                    )
+                    if response.status >= 400
+                    else None,
+                )
+                empty_page.on(
+                    "pageerror",
+                    lambda error: browser_diagnostics.append(
+                        f"JavaScript error: {error}"
+                    ),
+                )
                 await empty_page.goto(
                     f"{self.base_url}/www/empty-example/index.html",
                     wait_until="load",
                 )
                 hello_button = empty_page.get_by_role("button", name="Hello World")
-                await hello_button.wait_for(state="visible", timeout=10_000)
+                try:
+                    await hello_button.wait_for(state="visible", timeout=10_000)
+                except PlaywrightTimeoutError as error:
+                    self.fail(f"{error}\n" + "\n".join(browser_diagnostics))
 
                 async with empty_page.expect_response(
                     lambda response: (
@@ -237,17 +262,69 @@ class ExperimentExecutionSmokeTests(unittest.IsolatedAsyncioTestCase):
                 self.assertTrue(empty_results.strip())
 
                 spr_page = await browser.new_page()
+                spr_diagnostics = []
+                spr_page.on(
+                    "requestfailed",
+                    lambda request: spr_diagnostics.append(
+                        f"request failed: {request.url} ({request.failure})"
+                    ),
+                )
+                spr_page.on(
+                    "response",
+                    lambda response: spr_diagnostics.append(
+                        f"HTTP {response.status}: {response.url}"
+                    )
+                    if response.status >= 400
+                    else None,
+                )
+                spr_page.on(
+                    "pageerror",
+                    lambda error: spr_diagnostics.append(
+                        f"JavaScript error: {error}"
+                    ),
+                )
+                spr_page.on(
+                    "console",
+                    lambda message: spr_diagnostics.append(
+                        f"console {message.type}: {message.text}"
+                    ),
+                )
                 await spr_page.goto(
                     f"{self.base_url}/www/spr-example/index.html",
                     wait_until="load",
                 )
-                await spr_page.locator("input").fill("smoke-test-participant")
+                try:
+                    await spr_page.locator("textarea").wait_for(
+                        state="visible",
+                        timeout=10_000,
+                    )
+                except PlaywrightTimeoutError as error:
+                    body_text = await spr_page.locator("body").inner_text()
+                    browser_state = await spr_page.evaluate(
+                        """() => ({
+                            bodyHTML: document.body.innerHTML.slice(0, 5000),
+                            itemCount: Array.isArray(window.items) ? window.items.length : null,
+                            itemHeaders: Array.isArray(window.items)
+                                ? window.items.map(item => item.slice(0, 2))
+                                : null,
+                            sequenceType: typeof window.Sequence,
+                            shuffleSequenceType: typeof window.shuffleSequence,
+                            runningOrderType: typeof window.runningOrder
+                        })"""
+                    )
+                    self.fail(
+                        f"{error}\n"
+                        f"body text: {body_text!r}\n"
+                        f"browser state: {browser_state!r}\n"
+                        + "\n".join(spr_diagnostics)
+                    )
+                await spr_page.locator("textarea").fill("smoke-test-participant")
                 await spr_page.get_by_role("button", name="Start").click()
                 await spr_page.get_by_role(
                     "button",
                     name="Start reading",
                 ).click()
-                await spr_page.locator(".sentence").wait_for(
+                await spr_page.locator(".DashedSentence-sentence").wait_for(
                     state="visible",
                     timeout=10_000,
                 )
@@ -258,7 +335,7 @@ class ExperimentExecutionSmokeTests(unittest.IsolatedAsyncioTestCase):
                 )
                 await self._advance_dashed_sentence(spr_page, next_sentence_button)
                 await next_sentence_button.click()
-                await spr_page.locator(".sentence").wait_for(
+                await spr_page.locator(".DashedSentence-sentence").wait_for(
                     state="visible",
                     timeout=10_000,
                 )

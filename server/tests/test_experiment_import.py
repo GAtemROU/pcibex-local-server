@@ -181,6 +181,20 @@ class ExperimentImportTests(unittest.IsolatedAsyncioTestCase):
                     f"data_includes/{experiment_name}/main.js",
                     generated_html,
                 )
+                self.assertIn(
+                    f"js_includes/{experiment_name}/PennController.js",
+                    generated_html,
+                )
+                self.assertIn(
+                    f"css_includes/{experiment_name}/DashedSentence.css",
+                    generated_html,
+                )
+                self.assertLess(
+                    generated_html.index(
+                        f"data_includes/{experiment_name}/main.js"
+                    ),
+                    generated_html.index("../conf.js"),
+                )
                 self.assertNotIn("global_z.css", generated_html)
 
                 html_response = await self.client.get(

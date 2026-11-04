@@ -26,17 +26,17 @@
     </script>
 
     <!-- PennController -->
-    <script src="../../js_includes/AcceptabilityJudgment.js"></script>
-    <script src="../../js_includes/DashedAcceptabilityJudgment.js"></script>
-    <script src="../../js_includes/DashedSentence.js"></script>
-    <script src="../../js_includes/FlashSentence.js"></script>
-    <script src="../../js_includes/Form.js"></script>
-    <script src="../../js_includes/Message.js"></script>
-    <script src="../../js_includes/PennController.js"></script>
-    <script src="../../js_includes/Question.js"></script>
-    <script src="../../js_includes/Scale.js"></script>
-    <script src="../../js_includes/Separator.js"></script>
-    <script src="../../js_includes/VBox.js"></script>
+    <script src="../../js_includes/{{ experiment_name }}/AcceptabilityJudgment.js"></script>
+    <script src="../../js_includes/{{ experiment_name }}/DashedAcceptabilityJudgment.js"></script>
+    <script src="../../js_includes/{{ experiment_name }}/DashedSentence.js"></script>
+    <script src="../../js_includes/{{ experiment_name }}/FlashSentence.js"></script>
+    <script src="../../js_includes/{{ experiment_name }}/Form.js"></script>
+    <script src="../../js_includes/{{ experiment_name }}/Message.js"></script>
+    <script src="../../js_includes/{{ experiment_name }}/PennController.js"></script>
+    <script src="../../js_includes/{{ experiment_name }}/Question.js"></script>
+    <script src="../../js_includes/{{ experiment_name }}/Scale.js"></script>
+    <script src="../../js_includes/{{ experiment_name }}/Separator.js"></script>
+    <script src="../../js_includes/{{ experiment_name }}/VBox.js"></script>
 
     <!-- Sound -->
     <script src="../soundmanager2-jsmin.js"></script>
@@ -45,9 +45,18 @@
     <script src="../backcompatcruft.js"></script>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="../../css_includes/DashedSentence.css" />
-    <link rel="stylesheet" href="../../css_includes/FlashSentence.css" />
-    <link rel="stylesheet" href="../../css_includes/Form.css" />
+    <link
+      rel="stylesheet"
+      href="../../css_includes/{{ experiment_name }}/DashedSentence.css"
+    />
+    <link
+      rel="stylesheet"
+      href="../../css_includes/{{ experiment_name }}/FlashSentence.css"
+    />
+    <link
+      rel="stylesheet"
+      href="../../css_includes/{{ experiment_name }}/Form.css"
+    />
     <link
       rel="stylesheet"
       href="../../css_includes/{{ experiment_name }}/global_main.css"
@@ -58,16 +67,28 @@
         href="../../css_includes/{{ experiment_name }}/global_z.css"
       />
     {% endif %}
-    <link rel="stylesheet" href="../../css_includes/Message.css" />
-    <link rel="stylesheet" href="../../css_includes/Question.css" />
-    <link rel="stylesheet" href="../../css_includes/Scale.css" />
-    <link rel="stylesheet" href="../../css_includes/Separator.css" />
+    <link
+      rel="stylesheet"
+      href="../../css_includes/{{ experiment_name }}/Message.css"
+    />
+    <link
+      rel="stylesheet"
+      href="../../css_includes/{{ experiment_name }}/Question.css"
+    />
+    <link
+      rel="stylesheet"
+      href="../../css_includes/{{ experiment_name }}/Scale.css"
+    />
+    <link
+      rel="stylesheet"
+      href="../../css_includes/{{ experiment_name }}/Separator.css"
+    />
 
-    <!-- Config -->
-    <script src="../conf.js"></script>
 
     <!-- Experiment -->
     <script src="../../data_includes/{{ experiment_name }}/main.js"></script>
+    <!-- Config -->
+    <script src="../conf.js"></script>
     <script src="../../other_includes/main.js"></script>
 
     <title>Saarland Experiment</title>

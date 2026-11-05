@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools==84.2.1", "wheel==0.48.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pcibex-local-server"
+version = "0.1.0"
+description = "Self-hosted PCIbex experiment management backend"
+requires-python = ">=3.11"
+dependencies = [
+    "Quart",
+    "hypercorn",
+    "pymongo",
+    "python-dotenv",
+    "quart-bcrypt",
+    "quart-cors",
+    "cryptography",
+    "regex",
+    "PyJWT",
+]
+
+[project.optional-dependencies]
+test = [
+    "playwright==1.52.0",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+pcibex_server = ["templates/*.html"]

@@ -4,11 +4,15 @@ import unittest
 from pathlib import Path
 
 SERVER_DIR = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(SERVER_DIR))
+sys.path.insert(0, str(SERVER_DIR / "src"))
 
 from quart import Quart
-import pcibex
-from utils import extractMediaFilePath, getExperimentFromHeaders, getExperimentNameFromPath
+from pcibex_server import pcibex
+from pcibex_server.utils import (
+    extractMediaFilePath,
+    getExperimentFromHeaders,
+    getExperimentNameFromPath,
+)
 
 
 class ExperimentPathHelperTests(unittest.TestCase):

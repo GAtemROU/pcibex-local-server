@@ -1,29 +1,35 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter, Router } from '@angular/router';
+import { of } from 'rxjs';
+import { AuthService } from './auth.service';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
+      providers: [
+        provideRouter([]),
+        {
+          provide: AuthService,
+          useValue: { authState$: of(false) },
+        },
+      ],
     }).compileComponents();
   });
 
   it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it(`should have the 'vd-pcibex' title`, () => {
+  it('should navigate to the landing page after login succeeds', () => {
     const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('vd-pcibex');
-  });
+    const router = TestBed.inject(Router);
+    const navigate = spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
 
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, vd-pcibex');
+    fixture.componentInstance.onLoginSuccess();
+
+    expect(navigate).toHaveBeenCalledWith(['/landing']);
   });
 });

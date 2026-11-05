@@ -3,7 +3,7 @@ import { Injectable, inject, Inject, signal, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, tap } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
-import { environment } from '../environments/environment.development';
+import { environment } from '../environments/environment';
 import { ApiService } from './api.service';
 
 

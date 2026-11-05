@@ -21,9 +21,10 @@ from werkzeug.datastructures import FileStorage
 
 SERVER_DIR = Path(__file__).resolve().parents[1]
 REPOSITORY_DIR = SERVER_DIR.parent
+PACKAGE_SRC_DIR = SERVER_DIR / "src"
 EXAMPLES_DIR = REPOSITORY_DIR / "pcibex_examples"
 RUNTIME_DIR = SERVER_DIR / "tests" / "fixtures" / "pcibex-runtime"
-TEST_JWT_SECRET = "experiment-execution-test-secret"
+TEST_JWT_SECRET = "experiment-execution-test-secret-with-at-least-32-bytes"
 EXPERIMENTS = (
     ("empty-example.zip", "empty-example"),
     ("spr-exmaple.zip", "spr-example"),
@@ -32,11 +33,9 @@ EXPERIMENTS = (
 os.environ.setdefault("MONGO_USERNAME", "test")
 os.environ.setdefault("MONGO_PASSWORD", "test")
 os.environ.setdefault("JWT_SECRET_KEY", TEST_JWT_SECRET)
-sys.path.insert(0, str(SERVER_DIR))
+sys.path.insert(0, str(PACKAGE_SRC_DIR))
 
-import auth
-import experiments
-import pcibex
+from pcibex_server import auth, experiments, pcibex
 
 
 class ExperimentExecutionSmokeTests(unittest.IsolatedAsyncioTestCase):
@@ -76,7 +75,9 @@ class ExperimentExecutionSmokeTests(unittest.IsolatedAsyncioTestCase):
                 experiments,
                 "jinja_env",
                 Environment(
-                    loader=FileSystemLoader(str(SERVER_DIR / "templates")),
+                    loader=FileSystemLoader(
+                        str(PACKAGE_SRC_DIR / "pcibex_server" / "templates")
+                    ),
                     autoescape=True,
                 ),
             ),

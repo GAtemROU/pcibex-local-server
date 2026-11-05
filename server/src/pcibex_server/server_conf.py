@@ -1,13 +1,31 @@
 # This software is licensed under a BSD license; see the LICENSE file for details.
 
-# Optionally define the following variable to set the working
-# directory of the server. You can also define the environment
-# variable of the same name (the value of the environment variable
-# takes precedence over the value of this variable).
-#
-# IMPORTANT: A number of other _DIR options will be set relative
-# to this path, unless you set them to absolute paths.
-IBEX_WORKING_DIR = "../"
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
+_SOURCE_PROJECT_ROOT = Path(__file__).resolve().parents[3]
+if (_SOURCE_PROJECT_ROOT / "ibex").is_dir():
+    _DEFAULT_DATA_ROOT = _SOURCE_PROJECT_ROOT / "ibex"
+else:
+    _DEFAULT_DATA_ROOT = Path(
+        os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share")
+    ) / "pcibex" / "ibex"
+
+
+def _configured_path(name, default, base=_DEFAULT_DATA_ROOT):
+    configured = os.environ.get(name)
+    value = Path(configured).expanduser() if configured else Path(default).expanduser()
+    if not value.is_absolute():
+        value = base / value
+    return str(value.resolve())
+
+
+DATA_ROOT = _configured_path("PCIBEX_DATA_DIR", _DEFAULT_DATA_ROOT)
+IBEX_WORKING_DIR = _configured_path("IBEX_WORKING_DIR", DATA_ROOT, Path(DATA_ROOT))
 
 # Options are "toy" or "cgi" (case-sensitive); the value "paste"
 # is equivalent to "toy" and is supported for backwards compatibility.
@@ -98,11 +116,31 @@ MINIFY_JS = False
 # EXTERNAL_CONFIG_PASS_PARAMS = True
 # EXTERNAL_CONFIG_METHOD = "GET" # 'POST' is currently not implemented.
 
-PORT = 3001
-PRIVATE_DIRECTORY = "D:\\PCIbex\\project\\vd-pcibex\\ibex\\results"
-PUBLIC_DIRECTORY = "D:\\PCIbex\\project\\vd-pcibex\\ibex"
-SOURCE_ZIP_DIRECTORY = "D:\\PCIbex\\project\\vd-pcibex\\ibex\\source"
-BASE_APPLICATION_URL = 'http://localhost:4200'
+PORT = int(os.environ.get("PORT") or "3001")
+PRIVATE_DIRECTORY = _configured_path(
+    "PRIVATE_DIRECTORY",
+    Path(DATA_ROOT) / "results",
+    Path(DATA_ROOT),
+)
+PUBLIC_DIRECTORY = _configured_path("PUBLIC_DIRECTORY", DATA_ROOT, Path(DATA_ROOT))
+SOURCE_ZIP_DIRECTORY = _configured_path(
+    "SOURCE_ZIP_DIRECTORY",
+    Path(DATA_ROOT) / "source",
+    Path(DATA_ROOT),
+)
+BASE_APPLICATION_URL = (
+    os.environ.get("BASE_APPLICATION_URL") or "http://localhost:4200"
+).rstrip("/")
+JWT_SECRET_KEY = os.environ.get("JWT_SECRET_KEY")
+MONGO_DB = os.environ.get("MONGO_DB")
+CORS_ALLOWED_ORIGINS = tuple(
+    origin.strip()
+    for origin in os.environ.get(
+        "CORS_ALLOWED_ORIGINS",
+        "",
+    ).split(",")
+    if origin.strip()
+)
 APP_ROLES = ['ADMIN', 'USER', 'STUDENT']
 EMAIL_REGEX = r'^[a-zA-Z0-9._%+-]+@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$'
 FULLNAME_REGEX = r"^(?:(?:\p{L}[\p{L}\p{M}']*)(?:[-'\s])?)+$"

@@ -1,13 +1,13 @@
     
 from quart import Blueprint
 from quart import Quart, Response, request, send_from_directory, jsonify,abort
-from messages import USER_MESSAGES
-import server_conf  # Import your configuration file
+from .messages import USER_MESSAGES
+from . import server_conf
 from datetime import datetime
 import os
 import json
-from utils import getExperimentFromHeaders, extractMediaFilePath, getExperimentNameFromPath
-from experiments import get_experiment_entry_by_name
+from .utils import getExperimentFromHeaders, extractMediaFilePath, getExperimentNameFromPath
+from .experiments import get_experiment_entry_by_name
 
 PORT = server_conf.PORT
 PRIVATE_DIRECTORY = server_conf.PRIVATE_DIRECTORY
@@ -43,7 +43,11 @@ async def send_files(path):
         
         if setsquare is not None:
           if setsquare.lower().startswith("inc-"):
-            previous_value = int(open(counter_file,"r").read()) if os.path.exists(counter_file) else 0
+            if os.path.exists(counter_file):
+              with open(counter_file, "r") as counter:
+                previous_value = int(counter.read())
+            else:
+              previous_value = 0
             setsquare = int(previous_value) + int(setsquare.lower().lstrip("inc-"))
           with open(counter_file,"w") as counter:
             counter.write(str(int(setsquare)))
@@ -107,12 +111,15 @@ async def server():
       counter_value = 0
       counter_file = os.path.join(PRIVATE_DIRECTORY,experiment_name, "counter")
       if os.path.exists(counter_file):
-        counter_from_file = open(counter_file,"r").read()
+        with open(counter_file, "r") as counter:
+          counter_from_file = counter.read()
         counter_value = int(counter_from_file) if counter_from_file.isdigit() else counter_value
-      open(counter_file,"w").write(str(counter_value+1))
+      with open(counter_file, "w") as counter:
+        counter.write(str(counter_value + 1))
     result_file = os.path.join(PRIVATE_DIRECTORY,experiment_name,"results")
     open_mode = "a" if os.path.exists(result_file) else "w"
-    open(result_file,open_mode).write(f"{data}\n")
+    with open(result_file, open_mode) as results:
+        results.write(f"{data}\n")
 
     return {'url': experiment_entry['redirect_url']}
 
@@ -129,8 +136,11 @@ async def counter():
     else:
       counter_file = os.path.join(PRIVATE_DIRECTORY,experiment_name, "counter")
       if not os.path.exists(counter_file):
-          open(counter_file,"w").write("0")
-      return Response(f"window.__counter_value_from_server__ = {open(counter_file,'r').read()};", mimetype="text/javascript")
+          with open(counter_file, "w") as counter:
+              counter.write("0")
+      with open(counter_file, "r") as counter:
+          counter_value = counter.read()
+      return Response(f"window.__counter_value_from_server__ = {counter_value};", mimetype="text/javascript")
     
 
     

@@ -4,7 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Component, Renderer2, Inject } from '@angular/core';
 import { ToastService } from '../toast.service';
 import { AuthService } from '../auth.service';
-import { environment } from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 import { ApiService } from '../api.service';
 
 @Component({

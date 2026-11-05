@@ -1,9 +1,11 @@
-name: Backend tests
+name: CI
 
 on:
   push:
   pull_request:
   workflow_dispatch:
+permissions:
+  contents: read
 
 jobs:
   backend-tests:
@@ -19,7 +21,7 @@ jobs:
       MONGO_PORT: "27017"
       MOSAIC_ADMIN: ci@example.test
       MOSAIC_ADMIN_PASSWORD: ci
-      JWT_SECRET_KEY: integration-test-secret
+      JWT_SECRET_KEY: integration-test-secret-for-ci-only
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -27,11 +29,97 @@ jobs:
           python-version: "3.11"
           cache: pip
           cache-dependency-path: |
-            server/requirements.txt
-            server/requirements-test.txt
-      - name: Install backend dependencies
-        run: python -m pip install -r requirements-test.txt
+            server/requirements-test.lock
+            server/build-requirements.lock
+      - name: Install locked backend dependencies and package
+        run: |
+          python -m pip install -r requirements-test.lock
+          python -m pip install -r build-requirements.lock
+          python -m pip install --no-build-isolation --no-deps .
       - name: Install Chromium
         run: python -m playwright install --with-deps chromium
       - name: Run backend tests
         run: python -m unittest discover -s tests -v
+
+  frontend:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.14.0"
+          cache: npm
+      - uses: browser-actions/setup-chrome@v1
+      - name: Install locked frontend dependencies
+        run: npm ci
+      - name: Run Angular tests
+        run: npm test -- --watch=false --browsers=ChromeHeadless
+      - name: Build production frontend
+        run: npm run build:production
+
+  release-artifact:
+    needs: [backend-tests, frontend]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.14.0"
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            server/requirements.lock
+            server/build-requirements.lock
+      - name: Install locked backend runtime dependencies
+        run: python -m pip install -r server/requirements.lock
+      - name: Install build tools
+        run: |
+          npm ci
+          python -m pip install -r server/build-requirements.lock
+      - name: Build and install backend wheel
+        run: |
+          mkdir -p /tmp/pcibex-wheel
+          python -m build --no-isolation --wheel server --outdir /tmp/pcibex-wheel
+          python -m pip install --no-deps /tmp/pcibex-wheel/*.whl
+      - name: Verify installed backend works outside the source tree
+        run: |
+          cd /tmp
+          python -c "from pcibex_server.experiments import jinja_env; jinja_env.get_template('template.html')"
+      - name: Build release artifact
+        run: ./deployment/build-release.sh
+      - name: Test deployment installer and archive verifier
+        run: python -m unittest discover -s deployment/tests -v
+      - name: Verify release artifact exclusions
+        run: python deployment/verify-release.py "dist/release/pcibex-release-${GITHUB_SHA}.tar.gz"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pcibex-release-${{ github.sha }}
+          path: dist/release/*
+
+  publish-github-release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [release-artifact]
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: pcibex-release-${{ github.sha }}
+          path: dist/release
+      - name: Publish versioned release assets
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            "dist/release/pcibex-release-${GITHUB_SHA}.tar.gz" \
+            "dist/release/pcibex-release-${GITHUB_SHA}.tar.gz.sha256" \
+            dist/release/install-release.py \
+            dist/release/verify-release.py \
+            --repo "$GITHUB_REPOSITORY" \
+            --verify-tag \
+            --generate-notes

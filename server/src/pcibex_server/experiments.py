@@ -1,24 +1,24 @@
 from io import BytesIO, StringIO
 import os
-from auth import require_auth
+from .auth import require_auth
 import uuid
 import shutil
 import zipfile
-from db import get_db_instance
-import server_conf  # Import your configuration file
+from .db import get_db_instance
+from . import server_conf
 from quart import Quart, Response, request, send_file, jsonify,abort, Blueprint, current_app, g
 from datetime import datetime, timezone
-from messages import USER_MESSAGES
-from utils import validate_experiment_name, validate_experiment_tags, validate_redirect_url
+from .messages import USER_MESSAGES
+from .utils import validate_experiment_name, validate_experiment_tags, validate_redirect_url
 from shutil import rmtree
 import json
 import csv
 from jinja2 import Environment, FileSystemLoader
 from pathlib import Path
-from users import get_user_by_id, get_all_users, get_user_by_query_params
+from .users import get_user_by_id, get_all_users, get_user_by_query_params
 
 jinja_env = Environment(
-    loader=FileSystemLoader("templates"),
+    loader=FileSystemLoader(str(Path(__file__).resolve().parent / "templates")),
     autoescape=True
 )
 

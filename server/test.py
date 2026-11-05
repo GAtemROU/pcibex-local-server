@@ -1,8 +1,13 @@
-import csv
-import ast
+from pathlib import Path
 
 # Input and output file paths
-input_file = "D:\\PCIbex\\project\\vd-pcibex\\ibex\\results\\experiment2\\results"         # Your original file
+input_file = (
+    Path(__file__).resolve().parents[1]
+    / "ibex"
+    / "results"
+    / "experiment2"
+    / "results"
+)
 output_file = "cleaned_results.csv"
 
 

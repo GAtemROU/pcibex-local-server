@@ -1,6 +1,6 @@
 from urllib.parse import urlparse
-from messages import USER_MESSAGES
-import server_conf
+from .messages import USER_MESSAGES
+from . import server_conf
 import regex
 from quart import Quart, current_app
 import re

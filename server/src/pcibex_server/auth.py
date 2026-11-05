@@ -3,17 +3,15 @@ import inspect
 from functools import wraps
 from quart import g, request, jsonify
 import jwt
-import os
-from server_conf import JWT_ALGORITHM
-from messages import USER_MESSAGES
-from db import get_db_instance
-
-JWT_SECRET = os.getenv("JWT_SECRET_KEY")
-JWT_ALGORITHM = JWT_ALGORITHM 
+from . import server_conf
+from .messages import USER_MESSAGES
+from .db import get_db_instance
+JWT_SECRET = server_conf.JWT_SECRET_KEY
+JWT_ALGORITHM = server_conf.JWT_ALGORITHM
 
 def get_user_collection():
     client = get_db_instance()
-    mongo_db = client[os.getenv('MONGO_DB')]
+    mongo_db = client[server_conf.MONGO_DB]
     users_collection = mongo_db['users']
     return users_collection
 

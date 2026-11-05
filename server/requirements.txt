@@ -1,9 +1,2 @@
-Quart
-hypercorn
-pymongo
-dotenv
-quart-bcrypt
-quart_cors
-cryptography
-regex
-PyJWT
+# Compatibility installer. Use requirements.lock for reproducible installs.
+.

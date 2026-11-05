@@ -1,10 +1,10 @@
 from functools import wraps
-from auth import require_auth
+from .auth import require_auth
 from quart import Quart, Blueprint, request, jsonify, current_app, g
-from db import get_db_instance
-from utils import validate_password, hash_password, check_password, validate_email, validate_full_name # Assuming you have a utility function for hashing passwords
-from messages import USER_MESSAGES
-import server_conf 
+from .db import get_db_instance
+from .utils import validate_password, hash_password, check_password, validate_email, validate_full_name # Assuming you have a utility function for hashing passwords
+from .messages import USER_MESSAGES
+from . import server_conf
 import uuid
 import jwt
 from datetime import datetime, timedelta, timezone

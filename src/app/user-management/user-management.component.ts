@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CreateUserComponent } from '../create-user/create-user.component';
 import { ApiService } from '../api.service';
-import {environment} from '../../environments/environment.development';
+import { environment } from '../../environments/environment';
 import { ToastService } from '../toast.service';
 
 @Component({

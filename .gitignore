@@ -42,8 +42,16 @@ testem.log
 Thumbs.db
 
 # Python cache
-/server/__pycache__
+__pycache__/
+*.py[cod]
 /server/.env
+/server/venv/
+/server/.venv/
+/server/build/
+/server/*.egg-info/
+/server/src/*.egg-info/
+/server/.pytest_cache/
 /ibex
 /.vscode/*
 virtualenv
+/.venv/

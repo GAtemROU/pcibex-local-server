@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { CreateUserComponent } from './create-user.component';
 
@@ -8,7 +10,8 @@ describe('CreateUserComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CreateUserComponent]
+      imports: [CreateUserComponent],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     })
     .compileComponents();
 
